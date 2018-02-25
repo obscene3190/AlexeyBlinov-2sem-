@@ -6,10 +6,10 @@
 using namespace std;
 
 class matrix_t {
+public:
 	int ** data;
 	unsigned int rows;
 	unsigned int columns;
-public:
 	matrix_t() {
 		data = nullptr;
 		rows = 0;
@@ -51,37 +51,41 @@ public:
 		return stream;
 	}
 	matrix_t add(matrix_t & other) const {
-		matrix_t result;
 		if (rows == other.rows && columns == other.columns) {
 			for (unsigned int i = 0; i < rows; ++i) {
 				for (unsigned int j = 0; j < columns; ++j) {
-					result.data[i][j] = data[i][j] + other.data[i][j];
+					other.data[i][j] = data[i][j] + other.data[i][j];
 				}
 			}
 		}
 		else {
 			cout << "Something went wrong :(";
 		}
-		return result;
+		return other;
 	}
 	matrix_t sub(matrix_t & other) const {
-		matrix_t result;
 		if (rows == other.rows && columns == other.columns) {
 			for (unsigned int i = 0; i < rows; ++i) {
 				for (unsigned int j = 0; j < columns; ++j) {
-					result.data[i][j] = data[i][j] - other.data[i][j];
+					other.data[i][j] = data[i][j] - other.data[i][j];
 				}
 			}
 		}
 		else {
 			cout << "Something went wrong :(";
 		}
-		return result;
+		return other;
 	}
 	matrix_t mul(matrix_t & other) const {
 		matrix_t result;
 		int res = 0;
 		if (columns == other.rows) {
+			result.rows = rows;
+			result.columns = other.columns;
+			result.data = new int *[rows];
+			for (int i = 0; i < rows; ++i) {
+				result.data[i] = new int[other.columns];
+			}
 			for (unsigned int i = 0; i < rows; i++) {
 				for (unsigned int j = 0; j < columns; j++) {
 					res = 0;
@@ -97,8 +101,14 @@ public:
 		}
 		return result;
 	}
-	matrix_t trans(matrix_t & other) const {
+	matrix_t trans() const {
 		matrix_t result;
+		result.rows = rows;
+		result.columns = columns;
+		result.data = new int *[rows];
+		for (int i = 0; i < rows; ++i) {
+			result.data[i] = new int[columns];
+		}
 		for (unsigned int i = 0; i < columns; i++) {
 			for (unsigned int j = 0; j < rows; j++) {
 				result.data[i][j] = data[j][i];
@@ -106,6 +116,7 @@ public:
 		}
 		return result;
 	}
+	~matrix_t() {}
 };
 
 bool readFileName(string &fileName) {
@@ -121,22 +132,45 @@ bool readFileName(string &fileName) {
 
 
 int main() {
-
-	matrix_t matrix1, matrix2;
+	matrix_t matrix1, matrix2, result;
 	char op;
 	string fileName1, fileName2;
 	ifstream streamA, streamB;
 	if (readFileName(fileName1)) {
 		matrix1.read(streamA, fileName1);
-		cin >> op;
-		cin.get();
-		if (op == '+') {
+		std::cin >> op;
+		std::cin.get();
+		if (op == 'T') {
+				result = matrix1.trans();
+				result.write(cout);
+		}
+		else if (matrix1.rows == matrix1.columns && (op == '-' || op == '+' || op == '*')) {
 			if (readFileName(fileName2)) {
 				matrix2.read(streamB, fileName2);
-				matrix_t result;
-				result = matrix1.add(matrix2);
-				result.write(cout);
+				if (matrix1.rows == matrix2.rows && matrix1.columns == matrix2.columns) {
+					switch (op) {
+					case '+': {
+						result = matrix1.add(matrix2);
+						result.write(cout);
+						break;
+					}
+					case '-': {
+						result = matrix1.sub(matrix2);
+						result.write(cout);
+						break;
+					}
+					case '*': {
+						result = matrix1.mul(matrix2);
+						result.write(cout);
+						break;
+					}
+					default:
+						cout << "An error has occured while reading input data";
+					}
+				}
 			}
+		else cout << "An error has occured while reading input data";
 		}
 	}
+	std::cin.get();
 }
