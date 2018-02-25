@@ -226,7 +226,7 @@ int main() {
 		matrix1.read(fileName1);
 		cin >> op;
 		cin.get();
-		if (op = '+') {
+		if (op == '+') {
 			if (readFileName(fileName2)) {
 				matrix2.read(fileName2);
 				matrix_t result;
