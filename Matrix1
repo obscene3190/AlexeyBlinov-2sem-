@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -11,33 +10,30 @@ class matrix_t {
 	unsigned int rows;
 	unsigned int columns;
 public:
-	ifstream & read(string fileName) {
+	matrix_t() {
+		data = nullptr;
+		rows = 0;
+		columns = 0;
+	}
+	ifstream & read(ifstream & stream, string fileName) {
+		stream.open(fileName.c_str());
 		char op;
-		ifstream input;
-		input.open(fileName.c_str());
-		if (input.is_open()) {
-			string  string;
-			getline(input, string);
-			istringstream stream(string);
-			if (stream >> rows && stream >> op && op == ',' && stream >> columns) {
-				data = new int *[rows];
-				for (unsigned int i = 0; i < rows; ++i) {
-					data[i] = new int[columns];
-					for (unsigned int j = 0; j < columns; ++j) {
-						data[i][j] = 0;
-					}
-				}
-				for (unsigned int i = 0; i < rows; i++) {
-					for (unsigned int j = 0; j < columns; j++) {
-						input >> data[i][j];
-					}
+		if (stream.is_open() &&
+			stream >> rows &&
+			stream >> op && op == ',' &&
+			stream >> columns) {
+			data = new int *[rows];
+			for (unsigned int i = 0; i < rows; ++i) {
+				data[i] = new int[columns];
+				for (unsigned int j = 0; j < columns; ++j) {
+					stream >> data[i][j];
 				}
 			}
 		}
 		else {
 			cout << "Error";
 		}
-		input.close();
+		return stream;
 	}
 	ostream & write(ostream & stream) {
 		stream << endl;
@@ -53,111 +49,62 @@ public:
 			stream << endl;
 		}
 	}
-	matrix_t add(matrix_t & other) {
+	matrix_t add(matrix_t & other) const {
 		matrix_t result;
-		//result.data = new int *[rows];
-		for (unsigned int i = 0; i < rows; i++) {
-			//data[i] = new int[columns];
-			for (unsigned int j = 0; j < columns; j++) {
-				result.data[i][j] = data[i][j] + other.data[i][j];
+		if (rows == other.rows && columns == other.columns) {
+			for (unsigned int i = 0; i < rows; ++i) {
+				for (unsigned int j = 0; j < columns; ++j) {
+					result.data[i][j] = data[i][j] + other.data[i][j];
+				}
+			}
+		}
+		else {
+			cout << "Something went wrong :(";
+		}
+		return result;
+	}
+	matrix_t sub(matrix_t & other) const {
+		matrix_t result;
+		if (rows == other.rows && columns == other.columns) {
+			for (unsigned int i = 0; i < rows; ++i) {
+				for (unsigned int j = 0; j < columns; ++j) {
+					result.data[i][j] = data[i][j] - other.data[i][j];
+				}
+			}
+		}
+		else {
+			cout << "Something went wrong :(";
+		}
+		return result;
+	}
+	matrix_t mul(matrix_t & other) const {
+		matrix_t result;
+		int res = 0;
+		if (collumns == other.rows) {
+			for (unsigned int i = 0; i < rows; i++) {
+				for (unsigned int j = 0; j < columns; j++) {
+					res = 0;
+					for (unsigned int k = 0; k < rows; k++) {
+						res += data[i][k] * other.data[k][j];
+						result.data[i][j] = res;
+					}
+				}
+			}
+		}
+		else {
+			cout << "Something went wrong :(";
+		}
+		return result;
+	}
+	matrix_t trans(matrix_t & other) const {
+		matrix_t result;
+		for (unsigned int i = 0; i < columns; i++) {
+			for (unsigned int j = 0; j < rows; j++) {
+				result.data[i][j] = data[j][i];
 			}
 		}
 		return result;
 	}
-	// matrix_t sub(matrix_t & other);
-	// matrix_t mul(matrix_t & other);
-	// matrix_t trans(matrix_t & other);
-};
-
-float** create(float** &matrix, unsigned int rows, unsigned int columns) {
-	matrix = new float *[rows];
-	for (unsigned int i = 0; i < rows; ++i) {
-		matrix[i] = new float[columns];
-		for (unsigned int j = 0; j < columns; ++j) {
-			matrix[i][j] = 0.0f;
-		}
-	}
-	return matrix;
-}
-
-void destroy(float ** elements, unsigned int rows)
-{
-	for (unsigned int i = 0; i < rows; ++i) {
-		delete[] elements[i];
-	}
-	delete[] elements;
-}
-
-void write(ostream & stream, float ** elements, unsigned int rows, unsigned int columns) {
-	stream << endl;
-	for (unsigned int i = 0; i < rows; i++) {
-		for (unsigned int j = 0; j < columns; j++) {
-			if (elements[i][j] == -0) {
-				stream << 0 << " ";
-			}
-			else {
-				stream << elements[i][j] << " ";
-			}
-		}
-		stream << endl;
-	}
-}
-
-
-
-
-
-float ** mult(float ** matrix1, float ** matrix2, float ** &matrix, unsigned int rows, unsigned int columns) {
-	matrix = new float *[rows];
-	for (unsigned int i = 0; i < rows; i++) {
-		matrix[i] = new float[columns];
-		for (unsigned int j = 0; j < columns; j++) {
-			float res = 0.0f;
-			for (unsigned int k = 0; k< rows; k++) {
-				res += matrix1[i][k] * matrix2[k][j];
-				matrix[i][j] = res;
-			}
-		}
-	}
-	return matrix;
-}
-
-float ** trans(float ** matrix1, float ** &matrix, unsigned int rows, unsigned int columns) {
-	matrix = new float *[columns];
-	for (unsigned int i = 0; i < columns; i++) {
-		matrix[i] = new float[rows];
-		for (unsigned int j = 0; j < rows; j++) {
-			matrix[i][j] = matrix1[j][i];
-		}
-	}
-	return matrix;
-}
-
-
-float** rewritefromfile(unsigned int &rows, unsigned int &columns, string FileName) {
-	float** matrix = nullptr;
-	char op;
-	ifstream input;
-	input.open(FileName.c_str());
-	if (input.is_open()) {
-		string  string;
-		getline(input, string);
-		istringstream stream(string);
-		if (stream >> rows && stream >> op && op == ',' && stream >> columns) {
-			matrix = create(matrix, rows, columns);
-			for (unsigned int i = 0; i < rows; i++) {
-				for (unsigned int j = 0; j < columns; j++) {
-					input >> matrix[i][j];
-				}
-			}
-		}
-	}
-	else {
-		cout << "Error";
-		return nullptr;
-	}
-	input.close();
-	return matrix;
 }
 
 bool readFileName(string &fileName) {
@@ -173,65 +120,21 @@ bool readFileName(string &fileName) {
 
 
 int main() {
-	/*unsigned int rows1 = 0, rows2 = 0, columns1 = 0, columns2 = 0;
-	char op;
-	string fileName1, fileName2;
-	float ** matrix1 = new float *[rows1];
-	float ** matrix;
-	if (readFileName(fileName1)) {
-	matrix1 = rewritefromfile(rows1, columns1, fileName1);
-	cin >> op;
-	cin.get();
-	if (op == 'T') {
-	trans(matrix1, matrix, rows1, columns1);
-	write(cout, matrix, columns1, rows1);
-	}
-	else if (rows1 == columns1 && (op == '-' || op == '+' || op == '*')) {
-	if (readFileName(fileName2)) {
-	float ** matrix2 = new float *[rows2];
-	matrix2 = rewritefromfile(rows2, columns2, fileName2);
-	if (rows1 == rows2 && columns1 == columns2) {
-	switch (op) {
-	case '+': {
-	add(matrix1, matrix2, matrix, rows1, columns1);
-	write(cout, matrix, rows1, columns1);
-	break;
-	}
-	case '-': {
-	sub(matrix1, matrix2, matrix, rows1, columns1);
-	write(cout, matrix, rows1, columns1);
-	break;
-	}
-	case '*': {
-	mult(matrix1, matrix2, matrix, rows1, columns1);
-	write(cout, matrix, rows1, columns1);
-	break;
-	}
-	default:
-	cout << "An error has occured while reading input data";
-	}
-	destroy(matrix2, rows1);
-	}
-	}
-	else cout << "An error has occured while reading input data";
-	}
 
-	}
-	else cout << "An error has occured while reading input data";
-	//destroy(matrix1, rows1); */
 	matrix_t matrix1, matrix2;
 	char op;
 	string fileName1, fileName2;
+	ifstream streamA, streamB;
 	if (readFileName(fileName1)) {
-		matrix1.read(fileName1);
+		matrix1.read(streamA, fileName1);
 		cin >> op;
 		cin.get();
 		if (op == '+') {
 			if (readFileName(fileName2)) {
-				matrix2.read(fileName2);
+				matrix2.read(streamB, fileName2);
 				matrix_t result;
-				matrix1 = matrix1.add(matrix2);
-				matrix1.write(cout);
+				result = matrix1.add(matrix2);
+				result.write(cout);
 			}
 		}
 	}
