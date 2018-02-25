@@ -83,7 +83,7 @@ public:
 			result.rows = rows;
 			result.columns = other.columns;
 			result.data = new int *[rows];
-			for (int i = 0; i < rows; ++i) {
+			for (unsigned int i = 0; i < rows; ++i) {
 				result.data[i] = new int[other.columns];
 			}
 			for (unsigned int i = 0; i < rows; i++) {
@@ -106,7 +106,7 @@ public:
 		result.rows = rows;
 		result.columns = columns;
 		result.data = new int *[rows];
-		for (int i = 0; i < rows; ++i) {
+		for (unsigned int i = 0; i < rows; ++i) {
 			result.data[i] = new int[columns];
 		}
 		for (unsigned int i = 0; i < columns; i++) {
