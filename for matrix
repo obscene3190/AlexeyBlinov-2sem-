@@ -1,0 +1,58 @@
+	//ADD
+  
+  matrix_t add(matrix_t & other) const {
+		matrix_t result;
+		if (rows == other.rows && collumns == other.collumns) {
+			for (unsigned int i = 0; i < rows; ++i) {
+				for (unsigned int j = 0; j < collumns; ++j) {
+					result.data[i][j] = data[i][j] + other.data[i][j];
+				}
+			}
+		}
+		else {
+		cout << "Something went wrong :(";
+		}
+		return result;
+	}
+  
+  ?
+ //SUB
+ 
+  matrix_t sub(matrix_t & other) const {
+		matrix_t result;
+		if (rows == other.rows && collumns == other.collumns) {
+			for (unsigned int i = 0; i < rows; ++i) {
+				for (unsigned int j = 0; j < collumns; ++j) {
+					result.data[i][j] = data[i][j] - other.data[i][j];
+				}
+			}
+		}
+		else {
+		cout << "Something went wrong :(";
+		}
+		return result;
+	}
+  
+  //MUL
+  
+ matrix_t mul(matrix_t & other) {
+	matrix_t result;
+	int res = 0;
+	if(collumns == other.rows) {
+	    for (unsigned int i = 0; i < rows; i++) {
+		for (unsigned int j = 0; j < columns; j++) {
+			res = 0;
+			for (unsigned int k = 0; k< rows; k++) {
+				res += data[i][k] * other.data[k][j];
+				result.data[i][j] = res;
+			    }
+	    	}
+    	}
+	}
+	else {
+		cout << "Something went wrong :(";
+		}
+	return result;
+	}
+  
+  
