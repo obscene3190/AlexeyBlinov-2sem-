@@ -122,6 +122,17 @@ public:
 		}
 		return result;
 	}
+	matrix_t(const matrix_t & matrix) {
+	rows = matrix.rows;
+	columns = matrix.columns;
+	data = new int *[rows];
+			for (unsigned int i = 0; i < rows; ++i) {
+				data[i] = new int[columns];
+				for (unsigned int j = 0; j < columns; ++j) {
+					data[i][j] = matrix.data[i][j];
+				}
+			}
+}
 	~matrix_t() {}
 };
 
