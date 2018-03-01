@@ -184,27 +184,26 @@ int main() {
 		else if (matrix1.rows == matrix1.columns && (op == '-' || op == '+' || op == '*')) {
 			if (readFileName(fileName2)) {
 				matrix2.read(streamB, fileName2);
-				if (matrix1.rows == matrix2.rows && matrix1.columns == matrix2.columns) {
-					switch (op) {
-					case '+': {
-						result = matrix1.add(matrix2);
-						result.write(cout);
-						break;
-					}
-					case '-': {
-						result = matrix1.sub(matrix2);
-						result.write(cout);
-						break;
-					}
-					case '*': {
-						result = matrix1.mul(matrix2);
-						result.write(cout);
-						break;
-					}
-					default:
-						cout << "An error has occured while reading input data";
-					}
+				switch (op) {
+				case '+': {
+					result = matrix1.add(matrix2);
+					result.write(cout);
+					break;
 				}
+				case '-': {
+					result = matrix1.sub(matrix2);
+					result.write(cout);
+					break;
+				}
+				case '*': {
+					result = matrix1.mul(matrix2);
+					result.write(cout);
+					break;
+				}
+				default:
+					cout << "An error has occured while reading input data";
+				}
+				
 			}
 		else cout << "An error has occured while reading input data";
 		}
