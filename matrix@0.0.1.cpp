@@ -56,7 +56,7 @@ public:
 		}
 		return stream;
 	}
-	matrix_t add(matrix_t & other) const {
+	matrix_t add(matrix_t const & other) const {
 		if (rows == other.rows && columns == other.columns) {
 			for (unsigned int i = 0; i < rows; ++i) {
 				for (unsigned int j = 0; j < columns; ++j) {
@@ -69,7 +69,7 @@ public:
 		}
 		return other;
 	}
-	matrix_t sub(matrix_t & other) const {
+	matrix_t sub(matrix_t const & other) const {
 		if (rows == other.rows && columns == other.columns) {
 			for (unsigned int i = 0; i < rows; ++i) {
 				for (unsigned int j = 0; j < columns; ++j) {
@@ -82,7 +82,7 @@ public:
 		}
 		return other;
 	}
-	matrix_t mul(matrix_t & other) const {
+	matrix_t mul(matrix_t const & other) const {
 		matrix_t result;
 		int res = 0;
 		if (columns == other.rows) {
@@ -132,7 +132,7 @@ public:
 					data[i][j] = matrix.data[i][j];
 				}
 			}
-}
+        }
 	matrix_t & operator=(const matrix_t & matrix) {
 		if (this != &matrix) {
 				for (unsigned int i = 0; i < rows; ++i) {
@@ -152,7 +152,7 @@ public:
 	else {
 		return *this;
 	}
-}
+        }
 	~matrix_t() {
 		for (unsigned int i = 0; i < rows; ++i) {
 			delete[] data[i];
