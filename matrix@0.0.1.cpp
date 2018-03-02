@@ -153,7 +153,12 @@ public:
 		return *this;
 	}
 }
-	~matrix_t() {}
+	~matrix_t() {
+		for (unsigned int i = 0; i < rows; ++i) {
+			delete[] data[i];
+		}
+		delete[] data;
+	}
 };
 
 bool readFileName(string &fileName) {
